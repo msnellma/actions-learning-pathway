@@ -1,0 +1,41 @@
+name: build-test-deploy
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: "Node version"
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4.2.2
+      
+      - name: setup node
+        uses: actions/setup-node@v4.1.0
+        with: 
+          node-version: ${{ inputs.node-version }}
+      
+      - run: npm install
+      - run: npm run build
+  
+  test:
+    needs: build
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4.2.2
+      
+      - name: setup node
+        uses: actions/setup-node@v4.1.0
+        with: 
+          node-version: ${{ inputs.node-version }}
+      
+      - run: npm install
+      - run: npm run test
